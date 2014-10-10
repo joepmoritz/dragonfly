@@ -3,18 +3,18 @@
 # (c) Copyright 2007, 2008 by Christo Butcher
 # Licensed under the LGPL.
 #
-#   Dragonfly is free software: you can redistribute it and/or modify it 
-#   under the terms of the GNU Lesser General Public License as published 
-#   by the Free Software Foundation, either version 3 of the License, or 
+#   Dragonfly is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published
+#   by the Free Software Foundation, either version 3 of the License, or
 #   (at your option) any later version.
 #
-#   Dragonfly is distributed in the hope that it will be useful, but 
-#   WITHOUT ANY WARRANTY; without even the implied warranty of 
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#   Dragonfly is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #   Lesser General Public License for more details.
 #
-#   You should have received a copy of the GNU Lesser General Public 
-#   License along with Dragonfly.  If not, see 
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with Dragonfly.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
 
@@ -22,8 +22,8 @@
 Fundamental element classes
 ============================================================================
 
-Dragonfly grammars are built up out of a small set of fundamental building 
-blocks.  These building blocks are implemented by the following *element* 
+Dragonfly grammars are built up out of a small set of fundamental building
+blocks.  These building blocks are implemented by the following *element*
 classes:
 
  - :class:`ElementBase` --
@@ -44,7 +44,7 @@ classes:
  - :class:`ListRef` --
    reference to a :class:`dragonfly.grammar.list.List` object
 
-The following *element* classes are built up out of the fundamental 
+The following *element* classes are built up out of the fundamental
 classes listed above:
 
  - :class:`Dictation` --
@@ -52,9 +52,9 @@ classes listed above:
    and includes facilities for formatting the spoken words with correct
    spacing and capitalization
  - :class:`DictListRef` --
-   reference to a :class:`dragonfly.all.DictList` object; this element is 
-   similar to the :class:`dragonfly.all.ListRef` element, except that it 
-   returns the value associated with the spoken words instead of the 
+   reference to a :class:`dragonfly.all.DictList` object; this element is
+   similar to the :class:`dragonfly.all.ListRef` element, except that it
+   returns the value associated with the spoken words instead of the
    spoken words themselves
 
 """
@@ -213,8 +213,8 @@ class ElementBase(object):
 
     def _copy_sequence(self, sequence, name, item_types=None):
         """
-            Utility function for derived classes that checks that a given 
-            object is a sequence, copies its contents into a new tuple, 
+            Utility function for derived classes that checks that a given
+            object is a sequence, copies its contents into a new tuple,
             and checks that each item is of a given type.
 
         """
@@ -546,7 +546,7 @@ class Repetition(Sequence):
 
     """
 
-    def __init__(self, child, min=1, max=None, name=None, default=None):
+    def __init__(self, child, min=1, max=None, name=None, default=None, joinValues=False):
         if not isinstance(child, ElementBase):
             raise TypeError("Child of %s object must be an"
                             " ElementBase instance." % self)
@@ -556,6 +556,7 @@ class Repetition(Sequence):
 
         self._child = child
         self._min = min
+        self._joinValues = joinValues
         if max is None: self._max = min + 1
         else:           self._max = max
 
@@ -635,7 +636,11 @@ class Repetition(Sequence):
 
         """
         repetitions = self.get_repetitions(node)
-        return [r.value() for r in repetitions]
+        values = [r.value() for r in repetitions]
+        if self._joinValues:
+            return ' '.join(values)
+        else:
+            return values
 
 
 #---------------------------------------------------------------------------
