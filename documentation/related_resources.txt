@@ -37,6 +37,14 @@ recognition users/developers:
  * `Dragonfly Speech Google Group
    <https://groups.google.com/forum/#!forum/dragonflyspeech>`_
 
+ * `Dragonfly FAQ at Stackoverflow
+   <http://stackoverflow.com/questions/tagged/python-dragonfly>`_
+
+ * `Hands-Free Coding Blog
+   <http://handsfreecoding.org/>`_
+   --- James Stout's blog on his experiences with Dragonfly and other
+   tools for doing hands-free technical computer work
+
  * `Speech Computing Forum on Dragonfly
    <http://web.archive.org/web/20131207063014/http://speechcomputing.com/forum/93>`_
    --- Archive.org snapshot from 2013-12-07, before this forum was
@@ -114,6 +122,13 @@ may be interesting to its users nevertheless:
  * `PySpeech <https://code.google.com/p/pyspeech/>`_
    --- A small Python module for interfacing with WSR
 
+ * `Pastebin document <http://pastebin.com/BGG1adb0>`_ containing
+   explanations of the Natlink API
+
  * `Unimacro <http://qh.antenna.nl/unimacro/index.html>`_
 
  * `Vocola <http://vocola.net/>`_
+
+ * `DragonControl <https://github.com/nriley/DragonControl>`_
+   --- Nicholas Riley's scripts for using Dragon Medical under Windows 7
+   in VMware Fusion as a dictation buffer for OS X

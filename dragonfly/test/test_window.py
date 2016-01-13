@@ -18,35 +18,30 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-"""
-Documentation build script
-============================================================================
 
-"""
-
-import sys
-import os
-import subprocess
+import unittest
+from dragonfly.windows.window import Window
 
 
 #===========================================================================
 
-build_binary = r"c:\python26\scripts\sphinx-build-script.py"
-build_type = "html"
+class TestWindow(unittest.TestCase):
 
-def run_sphinx():
-    python_binary = sys.executable
-    directory = os.path.dirname(__file__)
-    src_dir = os.path.abspath(os.path.join(directory, "documentation"))
-    dst_dir = os.path.abspath(os.path.join(directory, "build", "documentation"))
+    def setUp(self):
+        pass
 
-    arguments = [python_binary, build_binary,
-                 "-a", "-b",
-                 build_type, src_dir, dst_dir]
-    subprocess.call(arguments)
+    def test_set_handle(self):
+        """ Test access to Window.handle property. """
 
+        # Verify that only integers and longs are accepted.
+        Window(0)
+        Window(int(1))
+        Window(long(2))
+        self.assertRaises(TypeError, Window, [None])
+        self.assertRaises(TypeError, Window, ["string"])
+        self.assertRaises(TypeError, Window, [3.4])
 
 #===========================================================================
 
 if __name__ == "__main__":
-    run_sphinx()
+    unittest.main()

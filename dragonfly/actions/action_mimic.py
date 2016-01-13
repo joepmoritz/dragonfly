@@ -80,6 +80,9 @@ class Mimic(ActionBase):
         if "extra" in kwargs:  self._extra = kwargs.pop("extra")
         else:                  self._extra = None
 
+        # Set pretty printing string used by __str__ and __unicode__.
+        self._str = u", ".join(repr(w) for w in self._words)
+
         # Make sure that all keyword arguments have been consumed.
         if kwargs:
             raise ActionError("Invalid arguments: %r"
@@ -101,7 +104,7 @@ class Mimic(ActionBase):
             # Append the extra data to the static words depending on
             #  the type of the extra data object.
             if isinstance(extra, engine.DictationContainer):
-                words += extra.words
+                words += tuple(extra.words)
             elif isinstance(extra, (tuple, list)):
                 words += tuple(extra)
             elif isinstance(extra, basestr):

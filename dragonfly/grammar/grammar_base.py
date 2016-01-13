@@ -194,16 +194,19 @@ class Grammar(object):
         self._log_load.debug("Grammar %s: adding list %s."
                             % (self._name, lst.name))
 
-        # Check for correct type and duplicate lists or list names.
+        # Make sure that the list can be loaded and is not a duplicate.
         if self._loaded:
             raise GrammarError("Cannot add list while loaded.")
         elif not isinstance(lst, ListBase):
             raise GrammarError("Invalid list object: %s" % lst)
-        elif lst in self._lists:
-            return
-        elif [True for l in self._lists if l.name == lst.name]:
-            raise GrammarError("Two lists with the same name '%s' not"
-                "allowed." % lst.name)
+
+        for l in self._lists:
+            if l.name == lst.name:
+                if l is lst:
+                    # This list was already added previously, so ignore.
+                    return
+                raise GrammarError("Two lists with the same name '%s' not"
+                                   " allowed." % lst.name)
 
         # Append the list to this grammar object's internal list.
         self._lists.append(lst)
@@ -382,6 +385,10 @@ class Grammar(object):
         """
             Start of phrase callback.
 
+            *Usually derived grammar classes override
+            ``Grammar._process_begin`` instead of this method, because
+            this method merely wraps that method adding context matching.*
+
             This method is called when the speech recognition 
             engine detects that the user has begun to speak a 
             phrase.
@@ -451,14 +458,14 @@ class Grammar(object):
         """
             Start of phrase callback.
 
-            *This usually the method which should be overridden 
+            *This usually is the method which should be overridden 
             to give derived grammar classes custom behavior.*
 
             This method is called when the speech recognition 
             engine detects that the user has begun to speak a 
-            phrase.  This method is only called when this 
-            grammar's context does match positively.  It is 
-            called by the ``Grammar.process_begin`` method.
+            phrase. This method is called by the
+            ``Grammar.process_begin`` method only if this
+            grammar's context matches positively.
 
             Arguments:
              - *executable* -- the full path to the module whose 
