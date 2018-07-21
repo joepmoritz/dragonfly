@@ -215,6 +215,7 @@ class Key(DynStrActionBase):
         }
     interval_factor = 0.01
     interval_default = 0.0
+    outer_pause_default = 10
     _keyboard = Keyboard()
 
     def _parse_spec(self, spec):
@@ -307,7 +308,7 @@ class Key(DynStrActionBase):
                 raise ActionError("Invalid outer pause value: %r,"
                                   " should be a positive number." % s)
         else:
-            outer_pause = self.interval_default * self.interval_factor
+            outer_pause = self.outer_pause_default * self.interval_factor
 
         direction = None; repeat = 1
         if special is not None:
