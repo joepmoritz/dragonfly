@@ -546,7 +546,7 @@ class Repetition(Sequence):
 
     """
 
-    def __init__(self, child, min=1, max=None, name=None, default=None, joinValues=False):
+    def __init__(self, child, min=1, max=None, name=None, default=None, joinWith=None):
         if not isinstance(child, ElementBase):
             raise TypeError("Child of %s object must be an"
                             " ElementBase instance." % self)
@@ -556,7 +556,7 @@ class Repetition(Sequence):
 
         self._child = child
         self._min = min
-        self._joinValues = joinValues
+        self._joinWith = joinWith
         if max is None: self._max = min + 1
         else:           self._max = max
 
@@ -637,8 +637,9 @@ class Repetition(Sequence):
         """
         repetitions = self.get_repetitions(node)
         values = [r.value() for r in repetitions]
-        if self._joinValues:
-            return ' '.join(values)
+        if self._joinWith is not None and self._joinWith != False:
+            values = [str(r) for r in values]
+            return self._joinWith.join(values)
         else:
             return values
 
