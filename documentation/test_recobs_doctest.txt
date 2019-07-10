@@ -21,8 +21,8 @@ The following class is derived from RecognitionObserver and prints
 when its callback methods are called::
 
     >>> class RecognitionObserverDemo(RecognitionObserver):
-    ...     def on_begin(self):
-    ...         print "on_begin()"
+    ...     def on_begin(self, executable, title, hanlde):
+    ...         print "on_begin(%s, %s)" % (executable, title)
     ...     def on_recognition(self, words):
     ...         print "on_recognition(): %s" % (words,)
     ...     def on_failure(self):
@@ -32,11 +32,11 @@ when its callback methods are called::
     >>> recobs_demo.register()
     >>> test_lit = ElementTester(Literal("hello world"))
     >>> test_lit.recognize("hello world")
-    on_begin()
+    on_begin("filename.exe", "Window Title", 1234)
     on_recognition(): (u'hello', u'world')
     u'hello world'
     >>> test_lit.recognize("hello universe")
-    on_begin()
+    on_begin("filename.exe", "Window Title", 1234)
     on_failure()
     RecognitionFailure
     >>> recobs_demo.unregister()
@@ -53,7 +53,7 @@ testing it::
     ...         RecognitionObserver.__init__(self)
     ...         self.waiting = False
     ...         self.words = None
-    ...     def on_begin(self):
+    ...     def on_begin(self, executable, title, handle):
     ...         self.waiting = True
     ...     def on_recognition(self, words):
     ...         self.waiting = False

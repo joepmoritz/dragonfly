@@ -174,22 +174,25 @@ class Rule(object):
 
         """
         assert self._grammar
-        if not self._enabled:
-            if self._active:
-                self.deactivate()
-            return
-        if self._context:
-            if self._context.matches(executable, title, handle):
+        try:
+            if not self._enabled:
+                if self._active:
+                    self.deactivate()
+                return
+            if self._context:
+                if self._context.matches(executable, title, handle):
+                    if not self._active:
+                        self.activate()
+                    self._process_begin()
+                else:
+                    if self._active:
+                        self.deactivate()
+            else:
                 if not self._active:
                     self.activate()
                 self._process_begin()
-            else:
-                if self._active:
-                    self.deactivate()
-        else:
-            if not self._active:
-                self.activate()
-            self._process_begin()
+        except:
+            print "Error activating %s (%s)" % (self, e)
 
     def activate(self, force=False):
         if not self._grammar:

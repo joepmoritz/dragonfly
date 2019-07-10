@@ -215,7 +215,7 @@ class Key(DynStrActionBase):
         }
     interval_factor = 0.01
     interval_default = 0.0
-    outer_pause_default = 10
+    outer_pause_default = 20
     _keyboard = Keyboard()
 
     def _parse_spec(self, spec):
@@ -332,11 +332,20 @@ class Key(DynStrActionBase):
                 events = []
                 for m in modifiers:
                     events.extend(m.on_events())
+
                 for i in range(repeat - 1):
                     events.extend(code.events(inner_pause))
                 events.extend(code.events(outer_pause))
                 for m in modifiers[-1::-1]:
                     events.extend(m.off_events())
+
+                # if modifiers:
+                #     events.extend(code.events(outer_pause))
+                #     for m in reversed(modifiers[1:]):
+                #         events.extend(m.off_events(outer_pause))
+                #     events.extend(modifiers[0].off_events(outer_pause))
+                # else:
+                #   events.extend(code.events(outer_pause))
         else:
             if modifiers:
                 raise ActionError("Cannot use direction with modifiers.")
@@ -350,5 +359,6 @@ class Key(DynStrActionBase):
         return events
 
     def _execute_events(self, events):
+        print("Sending key: %s" % self._spec)
         self._keyboard.send_keyboard_events(events)
         return True

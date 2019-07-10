@@ -31,6 +31,7 @@ from .grammar.grammar_connection import ConnectionGrammar
 from .grammar.rule_base          import Rule
 from .grammar.rule_compound      import CompoundRule
 from .grammar.rule_mapping       import MappingRule
+from .grammar.rule_action        import ExecuteActionRule
 from .grammar.elements  import (ElementBase, Sequence, Alternative,
                                 Optional, Repetition, Literal,
                                 ListRef, DictListRef, Dictation,
@@ -38,7 +39,7 @@ from .grammar.elements  import (ElementBase, Sequence, Alternative,
 from .grammar.context   import Context, AppContext
 from .grammar.list      import ListBase, List, DictList
 from .grammar.recobs    import (RecognitionObserver, RecognitionHistory,
-                                PlaybackHistory)
+                                PlaybackHistory, ContextEnabler)
 
 #from .grammar.number    import (Integer, IntegerRef, Digits, DigitsRef,
 #                                Number, NumberRef)

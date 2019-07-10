@@ -3,18 +3,18 @@
 # (c) Copyright 2007, 2008 by Christo Butcher
 # Licensed under the LGPL.
 #
-#   Dragonfly is free software: you can redistribute it and/or modify it 
-#   under the terms of the GNU Lesser General Public License as published 
-#   by the Free Software Foundation, either version 3 of the License, or 
+#   Dragonfly is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU Lesser General Public License as published
+#   by the Free Software Foundation, either version 3 of the License, or
 #   (at your option) any later version.
 #
-#   Dragonfly is distributed in the hope that it will be useful, but 
-#   WITHOUT ANY WARRANTY; without even the implied warranty of 
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+#   Dragonfly is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #   Lesser General Public License for more details.
 #
-#   You should have received a copy of the GNU Lesser General Public 
-#   License along with Dragonfly.  If not, see 
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with Dragonfly.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
 
@@ -48,8 +48,8 @@ default_levels = {
                   "grammar.begin":        (_info, _info),
                   "grammar.results":      (_warning, _warning),
                   "grammar.decode":       (_warning, _info),
-                  "grammar.eval":         (_warning, _warning),
-                  "grammar.process":      (_warning, _warning),
+                  "grammar.eval":         (_debug, _debug),
+                  "grammar.process":      (_debug, _debug),
                   "lang":                 (_warning, _info),
                   "compound.parse":       (_warning, _info),
                   "dictation.formatter":  (_warning, _warning),
@@ -58,7 +58,7 @@ default_levels = {
                   "action.exec":          (_warning, _warning),
                   "context":              (_warning, _info),
                   "context.match":        (_warning, _info),
-                  "rule":                 (_warning, _info),
+                  "rule":                 (_debug, _debug),
                   "config":               (_warning, _info),
                   "monitor.init":         (_warning, _info),
                   "dfly.test":            (_debug, _debug),
@@ -226,3 +226,6 @@ def setup_tracing(output, limit=None):
         output.flush()
 
     sys.settrace(_tracing_callback)
+
+
+setup_log()

@@ -427,7 +427,7 @@ class Optional(ElementBase):
         if node.children:
             return node.children[0].value()
         else:
-            return None
+            return self._default
 
 
 #---------------------------------------------------------------------------
@@ -583,6 +583,10 @@ class Repetition(Sequence):
         memo.append(self)
         return self._child.dependencies(memo)
 
+    def gstring(self):
+        return "+" + self._child.gstring() + "+"
+
+
     #-----------------------------------------------------------------------
     # Methods for runtime recognition processing.
 
@@ -680,7 +684,18 @@ class Literal(ElementBase):
         # Iterate through this element's words.
         # If all match, success.  Else, failure.
         for i in xrange(len(self._words)):
-            if state.word(i) != self._words[i]:
+            word = state.word(i)
+
+            if not word:
+                state.decode_failure(self)
+                return
+
+            if '\\' in word:
+                words = [w for w in word.split('\\') if w]
+            else:
+                words = [word]
+            
+            if not words or all([w != self._words[i] for w in words]):
                 state.decode_failure(self)
                 return
 
@@ -759,7 +774,11 @@ class RuleRef(ElementBase):
 
 class ListRef(ElementBase):
 
-    def __init__(self, name, list, key=None, default=None):
+    def __init__(self, list, name=None, key=None, default=None):
+        # Backwards compatibility, when name/dict arguments order was reversed
+        if isinstance(name, ListBase):
+            name, list = list, name
+
         self._list = None
         self._key = None
 
@@ -832,11 +851,15 @@ class ListRef(ElementBase):
 
 class DictListRef(ListRef):
 
-    def __init__(self, name, dict, key=None, default=None):
+    def __init__(self, dict, name=None, key=None, default=None):
+        # Backwards compatibility, when name/dict arguments order was reversed
+        if isinstance(name, DictList):
+            name, dict = dict, name
+
         if not isinstance(dict, DictList):
             raise TypeError("Dict object of %s object must be a"
                             " Dragonfly DictList." % self)
-        ListRef.__init__(self, name, dict, key, default=default)
+        ListRef.__init__(self, dict, name, key, default=default)
 
     #-----------------------------------------------------------------------
     # Methods for runtime recognition processing.
@@ -882,6 +905,57 @@ class Empty(ElementBase):
 #===========================================================================
 # Slightly more complex element classes.
 
+class DictateWord(ElementBase):
+
+    def __init__(self, name=None, format=True, default=None):
+        ElementBase.__init__(self, name, default=default)
+        self._format_words = format
+
+    def __str__(self):
+        if self.name:
+            return "%s(%r)" % (self.__class__.__name__, self.name)
+        else:
+            return "%s()" % (self.__class__.__name__)
+
+    #-----------------------------------------------------------------------
+    # Methods for load-time setup.
+
+    def gstring(self):
+        return "<DictateWord()>"
+
+    #-----------------------------------------------------------------------
+    # Methods for runtime recognition processing.
+
+    def decode(self, state):
+        state.decode_attempt(self)
+
+        # Check that at least one word has been dictated, otherwise feel.
+        if state.rule() != "dgnwords" and state.rule() != "dgndictation":
+            state.decode_failure(self)
+            return
+
+        # Determine how many words have been dictated.
+        count = 1
+        while state.rule(count) == "dgnwords" or state.rule(count) == "dgndictation":
+            count += 1
+
+        # Yield possible states where the number of dictated words
+        # gobbled is decreased by 1 between yields.
+        for i in xrange(count, 0, -1):
+            state.next(i)
+            state.decode_success(self)
+            yield state
+            state.decode_retry(self)
+            state.decode_rollback(self)
+
+        # None of the possible states were accepted, failure.
+        state.decode_failure(self)
+        return
+
+    def value(self, node):
+        return node.engine.DictationContainer(node.words())
+
+
 class Dictation(ElementBase):
 
     def __init__(self, name=None, format=True, default=None):
@@ -907,13 +981,13 @@ class Dictation(ElementBase):
         state.decode_attempt(self)
 
         # Check that at least one word has been dictated, otherwise feel.
-        if state.rule() != "dgndictation":
+        if state.rule() != "dgndictation" and state.rule() != "dgnwords":
             state.decode_failure(self)
             return
 
         # Determine how many words have been dictated.
         count = 1
-        while state.rule(count) == "dgndictation":
+        while state.rule(count) == "dgndictation" or state.rule(count) == "dgnwords":
             count += 1
 
         # Yield possible states where the number of dictated words

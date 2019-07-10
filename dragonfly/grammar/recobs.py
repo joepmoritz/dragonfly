@@ -53,7 +53,7 @@ class RecognitionObserver(object):
         engine = get_engine()
         engine.unregister_recognition_observer(self)
 
-#    def on_begin(self):
+#    def on_begin(self, executable, title, handle):
 #        pass
 #
 #    def on_recognition(self, words):
@@ -93,7 +93,7 @@ class RecognitionHistory(list, RecognitionObserver):
         """ *False* if phrase-start detected but no recognition yet. """
         return self._complete        
 
-    def on_begin(self):
+    def on_begin(self, executable, title, handle):
         self._complete = False
 
     def on_recognition(self, words):
@@ -134,3 +134,33 @@ class PlaybackHistory(RecognitionHistory):
 
     def __getslice__(self, i, j):
         return self.__getitem__(slice(i, j))
+
+
+#---------------------------------------------------------------------------
+
+class ContextEnabler(RecognitionObserver):
+    """
+        Facility to enable an object when a context is active
+    """
+
+    def __init__(self, match_function, enable_function, disable_function):
+        self._match_function = match_function
+        self._enable_function = enable_function
+        self._disable_function = disable_function
+
+        self._enabled = None
+
+        self.register()
+
+    def on_begin(self, executable, title, handle):
+        new_enabled = self._match_function(executable, title, handle)
+
+        # Compare _enabled to True/False so we always fire first time around
+        if new_enabled and self._enabled != True:
+            self._enable_function()
+            self._enabled = True
+        elif not new_enabled and self._enabled != False:
+            self._disable_function()
+            self._enabled = False
+
+

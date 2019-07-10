@@ -94,6 +94,7 @@ class _Single(parser_.Sequence):
             _Literal(),
             _Optional(),
             _Group(),
+            _Repetition(),
             self._element_identifier,
             ))
         elements = [
@@ -214,6 +215,16 @@ class _Group(parser_.Sequence):
         child = node.children[1].value()
         return child
 
+
+class _Repetition(parser_.Sequence):
+
+    def __init__(self):
+        elements = (parser_.String("+"), stuff, parser_.String("+"))
+        parser_.Sequence.__init__(self, elements)
+
+    def value(self, node):
+        child = node.children[1].value()
+        return elements_.Repetition(child, joinWith = '', max = 10)
 
 stuff.initialize()
 

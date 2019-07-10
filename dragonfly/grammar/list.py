@@ -59,6 +59,7 @@ class ListBase(object):
     def __init__(self, name):
         self._name = name
         self._grammar = None
+        self._enabled = True
 
     #-----------------------------------------------------------------------
     # Protected attribute access.
@@ -80,6 +81,18 @@ class ListBase(object):
     grammar = property(_get_grammar, _set_grammar,
         doc = "Set-once access to a list's grammar object.")
 
+    def enable(self):
+        self.set_enabled(True)
+
+    def disable(self):
+        self.set_enabled(False)
+
+    def set_enabled(self, new_enabled):
+        was_enabled = self._enabled
+        self._enabled = new_enabled
+        if was_enabled != new_enabled:
+            self._update()
+
     #-----------------------------------------------------------------------
     # Notify the grammar of a list modification.
 
@@ -94,6 +107,11 @@ class ListBase(object):
     #-----------------------------------------------------------------------
     # Accessor for the grammar to retrieve the list items.
     def get_list_items(self):
+        if not self._enabled:
+            return []
+        return self._get_list_items()
+
+    def _get_list_items(self):
         raise NotImplementedError("Call to virtual method list_items()")
 
 
@@ -113,7 +131,7 @@ class List(ListBase, list):
     #-----------------------------------------------------------------------
     # Accessor for the grammar to retrieve the list items.
 
-    def get_list_items(self):
+    def _get_list_items(self):
         return self
 
     #-----------------------------------------------------------------------
@@ -201,7 +219,7 @@ class DictList(ListBase, dict):
     #-----------------------------------------------------------------------
     # Accessor for the grammar to retrieve the list items.
 
-    def get_list_items(self):
+    def _get_list_items(self):
         return self.keys()
 
     #-----------------------------------------------------------------------

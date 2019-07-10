@@ -75,7 +75,10 @@ class State(object):
                 return "dgndictation"
             elif rule_id == 1000001:
                 return "dgnletters"
+            elif rule_id == 1000002:
+                return "dgnwords"
             else:
+                print "Error id: %d" % rule_id
                 word = self._results[i][0]
                 raise GrammarError("Malformed recognition data:"
                                    " word %r, rule id %d."

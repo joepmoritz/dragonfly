@@ -86,10 +86,11 @@ class StartApp(ActionBase):
         ActionBase.__init__(self)
         self._args = args
 
-        if "cwd" in kwargs:  self._cwd = kwargs.pop("cwd")
-        else:                self._cwd = None
+        self._cwd = kwargs.pop('cwd', None)
+        self._shell = kwargs.pop('shell', False)
+
         if kwargs:
-            raise ArgumentError("Invalid keyword arguments: %r" % kwargs)
+            raise Exception("Invalid keyword arguments: %r" % kwargs)
 
         # Expand any variables within path names.
         self._args = [self._interpret(a) for a in self._args]
@@ -103,8 +104,9 @@ class StartApp(ActionBase):
 
     def _execute(self, data=None):
         self._log.debug("Starting app: %r" % (self._args,))
+        print "Launching %s in %s" % (self._str, repr(self._cwd))
         try:
-            Popen(self._args, cwd=self._cwd)
+            Popen(self._args, cwd=self._cwd, shell=self._shell)
         except Exception, e:
             raise ActionError("Failed to start app %s: %s" % (self._str, e))
 

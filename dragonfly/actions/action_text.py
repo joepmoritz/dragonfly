@@ -65,7 +65,7 @@ class Text(DynStrActionBase):
 
     """
 
-    _pause_default = 0.02
+    _pause_default = 0.005
     _keyboard = Keyboard()
     _specials = {
                  "\n":   typeables["enter"],
@@ -135,5 +135,6 @@ class Text(DynStrActionBase):
             events = self._parse_spec(prefix + text + suffix)
 
         # Send keyboard events.
+        print("Sending text: %s" % self._spec)
         self._keyboard.send_keyboard_events(events)
         return True

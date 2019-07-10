@@ -81,6 +81,9 @@ class FocusWindow(ActionBase):
                 #  a window with a spoken title.
                 continue
 
+            # print "executable: %s" % window.executable
+            # print "title: %s" % window.title
+
             if executable:
                 if window.executable.lower().find(executable) == -1:
                     continue

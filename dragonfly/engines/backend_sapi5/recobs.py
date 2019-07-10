@@ -65,7 +65,7 @@ class Sapi5RecObsGrammar(Grammar):
     # Callback methods for handling utterances and recognitions.
 
     def process_begin(self, executable, title, handle):
-        self._manager.notify_begin()
+        self._manager.notify_begin(executable, title, handle)
 
     def process_recognition(self, words):
         raise RuntimeError("Recognition observer received an unexpected"

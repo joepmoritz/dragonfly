@@ -67,11 +67,11 @@ class RecObsManagerBase(object):
             if not self._observers:
                 self._deactivate()
 
-    def notify_begin(self):
+    def notify_begin(self, executable, title, handle):
         for observer in self._observers:
             try:
                 if hasattr(observer, "on_begin"):
-                    observer.on_begin()
+                    observer.on_begin(executable, title, handle)
             except Exception, e:
                 self._log.exception("Exception during on_begin()"
                                     " method of recognition observer %s: %s"

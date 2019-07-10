@@ -129,7 +129,8 @@ class Clipboard(object):
                     format = win32clipboard.EnumClipboardFormats(format)
                     if not format:
                         break
-                    formats.append(format)
+                    if format != win32con.CF_METAFILEPICT:
+                        formats.append(format)
             elif isinstance(formats, int):
                 formats = (formats,)
 
